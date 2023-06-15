@@ -22,7 +22,6 @@ Easy-GPU-PV does the following...
 1) Creates a VM of your choosing
 2) Automatically Installs Windows to the VM
 3) Partitions your GPU of choice and copies the required driver files to the VM  
-4) Installs [Parsec](https://parsec.app) to the VM, Parsec is an ultra low latency remote desktop app, use this to connect to the VM.  You can use Parsec for free non commercially. To use Parsec commercially, sign up to a [Parsec For Teams](https://parsec.app/teams) account  
 
 ### Prerequisites:
 * Windows 10 20H1+ Pro, Enterprise or Education OR Windows 11 Pro, Enterprise or Education.  Windows 11 on host and VM is preferred due to better compatibility.  
