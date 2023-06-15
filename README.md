@@ -1,3 +1,17 @@
+#How to enable checkpoints?
+Poweroff Guest VM, go to vm settings inside hyper v > Checkpoints option enable Production or Standard Checkpoints. 
+Production checkpoints are filesystem snapshots of your virtual disk. Easiest and Recommended option.
+
+Microsoft Definitions:
+Production checkpoints are "point in time" images of a virtual machine, which can be restored later on in a way that is completely supported for all production workloads. This is achieved by using backup technology inside the guest to create the checkpoint, instead of using saved state technology.
+
+Standard checkpoints capture the state, data, and hardware configuration of a running virtual machine and are intended for use in development and test scenarios. Standard checkpoints can be useful if you need to recreate a specific state or condition of a running virtual machine so that you can troubleshoot a problem.
+
+#Not suitable for gaming. 
+#Enhanced Session: Enhanced session allows passthrough of Printer, Clipboard, audio, smartcards and storage devices.
+To enable go to **Hyper-V settings and enable enhanced session. To use click the Desktop Computer icon with a "+", sign. 
+To change settings for enhanced session: Turn off/Shutdown VM and turn on enhanced session again, you will be prompted for settings. 
+
 # Easy-GPU-PV
 A work-in-progress project dedicated to making GPU Paravirtualization on Windows Hyper-V easier!  
 
@@ -37,7 +51,7 @@ It's important to update the VM GPU Drivers after you have updated the Host GPUs
 3. Run ```Update-VMGpuPartitionDriver.ps1 -VMName "Name of your VM" -GPUName "Name of your GPU"```    (Windows 10 GPU name must be "AUTO")
 
 ### Values
-  ```VMName = "GPUP"``` - Name of VM in Hyper-V and the computername / hostname  
+  ```VMName = "GPUPV"``` - Name of VM in Hyper-V and the computername / hostname  
   ```SourcePath = "C:\Users\james\Downloads\Win11_English_x64.iso"``` - path to Windows 10/ 11 ISO on your host   
   ```Edition    = 6``` - Leave as 6, this means Windows 10/11 Pro  
   ```VhdFormat  = "VHDX"``` - Leave this value alone  
