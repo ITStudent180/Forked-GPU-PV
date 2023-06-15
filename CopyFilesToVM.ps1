@@ -1,22 +1,36 @@
-﻿$params = @{
+#Removed references to parsec. Looking for alternatives? Try Moonlight, Sunshine,AMD Link, Steam Remote Play.
+#Script not running? Enable Powershell script execution.
+Increased amount of space, gpu provisioning and cores. Added user friendly comments. 
+$params = @{
+#Don't change name after provision. Something may break.
     VMName = "GPUPV"
-    SourcePath = "C:\Users\james\Downloads\Win11_English_x64.iso"
+    SourcePath = "yourwindowsimage.iso"
+    #Edition index, meaning the windows edition id from your install.wim file.
+    #Don't know what number to use? Mount your image then Run "Dism /Get-WimInfo /WimFile:<path_to_install.wim>". Don't forget admin privileges
+    #Don't forget to unmount it. 
     Edition    = 6
     VhdFormat  = "VHDX"
     DiskLayout = "UEFI"
-    SizeBytes  = 40GB
+#Disk is Thin Provisioned, meaning it only takes as much data as it's been used.
+    SizeBytes  = 80GB
     MemoryAmount = 8GB
-    CPUCores = 4
+#Slow? Start here. Best performance happens when you assign 80% of the number of threads. 
+    CPUCores = 6
     NetworkSwitch = "Default Switch"
-    VHDPath = "C:\Users\Public\Documents\Hyper-V\Virtual Hard Disks\"
+    VHDPath = "storagepathfordisk\"
+    #This is a script that runs automated commands after windows installation, it automate configuration of your system. 
     UnattendPath = "$PSScriptRoot"+"\autounattend.xml"
-    GPUName = "AUTO"
-    GPUResourceAllocationPercentage = 50
+    GPUName = "yourgpuname-taken from prechecks scripts"
+    #Note the gpu is truly shared. The allocation goes into effect during guest usage. Host can use it when the guest is running but idle.
+    #Best to start big. You can always not use what you provisioned because adding more is going to be more complicated.
+    GPUResourceAllocationPercentage = 80
+#Won't be used the function has been commented out.
     Team_ID = ""
     Key = ""
     Username = "GPUVM"
     Password = "CoolestPassword!"
-    Autologon = "true"
+#May interfer with Enhanced Session
+    Autologon = "false"
 }
 
 Import-Module $PSSCriptRoot\Add-VMGpuPartitionAdapterFiles.psm1
@@ -141,43 +155,6 @@ If ($ExitReason.Count -gt 0) {
         }
     SmartExit
     }
-}
-
-Function Setup-ParsecInstall {
-param(
-[string]$DriveLetter,
-[string]$Team_ID,
-[string]$Key
-)
-    $new = @()
-
-    $content = get-content "$PSScriptRoot\user\psscripts.ini" 
-
-    foreach ($line in $content) {
-        if ($line -like "0Parameters="){
-            $line = "0Parameters=$Team_ID $Key"
-            $new += $line
-            }
-        Else {
-            $new += $line
-            }
-    }
-    Set-Content -Value $new -Path "$PSScriptRoot\user\psscripts.ini"
-    if((Test-Path -Path $DriveLetter\Windows\system32\GroupPolicy\User\Scripts\Logon) -eq $true) {} Else {New-Item -Path $DriveLetter\Windows\system32\GroupPolicy\User\Scripts\Logon -ItemType directory | Out-Null}
-    if((Test-Path -Path $DriveLetter\Windows\system32\GroupPolicy\User\Scripts\Logoff) -eq $true) {} Else {New-Item -Path $DriveLetter\Windows\system32\GroupPolicy\User\Scripts\Logoff -ItemType directory | Out-Null}
-    if((Test-Path -Path $DriveLetter\Windows\system32\GroupPolicy\Machine\Scripts\Startup) -eq $true) {} Else {New-Item -Path $DriveLetter\Windows\system32\GroupPolicy\Machine\Scripts\Startup -ItemType directory | Out-Null}
-    if((Test-Path -Path $DriveLetter\Windows\system32\GroupPolicy\Machine\Scripts\Shutdown) -eq $true) {} Else {New-Item -Path $DriveLetter\Windows\system32\GroupPolicy\Machine\Scripts\Shutdown -ItemType directory | Out-Null}
-    if((Test-Path -Path $DriveLetter\ProgramData\Easy-GPU-P) -eq $true) {} Else {New-Item -Path $DriveLetter\ProgramData\Easy-GPU-P -ItemType directory | Out-Null}
-    Copy-Item -Path $psscriptroot\VMScripts\VDDMonitor.ps1 -Destination $DriveLetter\ProgramData\Easy-GPU-P
-    Copy-Item -Path $psscriptroot\VMScripts\VBCableInstall.ps1 -Destination $DriveLetter\ProgramData\Easy-GPU-P
-    Copy-Item -Path $psscriptroot\VMScripts\ParsecVDDInstall.ps1 -Destination $DriveLetter\ProgramData\Easy-GPU-P
-    Copy-Item -Path $psscriptroot\VMScripts\ParsecPublic.cer -Destination $DriveLetter\ProgramData\Easy-GPU-P
-    Copy-Item -Path $psscriptroot\VMScripts\Parsec.lnk -Destination $DriveLetter\ProgramData\Easy-GPU-P
-    Copy-Item -Path $psscriptroot\gpt.ini -Destination $DriveLetter\Windows\system32\GroupPolicy
-    Copy-Item -Path $psscriptroot\User\psscripts.ini -Destination $DriveLetter\Windows\system32\GroupPolicy\User\Scripts
-    Copy-Item -Path $psscriptroot\User\Install.ps1 -Destination $DriveLetter\Windows\system32\GroupPolicy\User\Scripts\Logon
-    Copy-Item -Path $psscriptroot\Machine\psscripts.ini -Destination $DriveLetter\Windows\system32\GroupPolicy\Machine\Scripts
-    Copy-Item -Path $psscriptroot\Machine\Install.ps1 -Destination $DriveLetter\Windows\system32\GroupPolicy\Machine\Scripts\Startup
 }
 
 function Convert-WindowsImage {
@@ -2492,9 +2469,9 @@ You can use the fields below to configure the VHD or VHDX that you want to creat
             if (($GPUName)) {
             Add-VMGpuPartitionAdapterFiles -GPUName $GPUName -DriveLetter $windowsDrive
             }
-
+#Commented out to remove bloatware
             Write-W2VInfo "Setting up Parsec to install at boot"
-            Setup-ParsecInstall -DriveLetter $WindowsDrive -Team_ID $team_id -Key $key
+            #Setup-ParsecInstall -DriveLetter $WindowsDrive -Team_ID $team_id -Key $key
 
             if ($DiskLayout -eq "UEFI")
             {
@@ -4388,9 +4365,6 @@ param(
         Write-Host "INFO   : Starting and connecting to VM"
         vmconnect localhost $VMName
         }
-    else {
-    SmartExit -ExitReason "Failed to create VHDX, stopping script"
-    }
 }
 
 Check-Params @params
@@ -4398,7 +4372,7 @@ Check-Params @params
 New-GPUEnabledVM @params
 
 Start-VM -Name $params.VMName
-
+#ignore the parsec msg. 
 SmartExit -ExitReason "If all went well the Virtual Machine will have started, 
 In a few minutes it will load the Windows desktop, 
 when it does, sign into Parsec (a fast remote desktop app)
