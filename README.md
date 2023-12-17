@@ -1,4 +1,8 @@
-#How to enable checkpoints?
+Removed references to parsec. Looking for alternatives? Try Moonlight, Sunshine,AMD Link, Steam Remote Play.
+Script not running? Enable Powershell script execution.
+Increased amount of space, gpu provisioning and cores. Added user friendly comments. 
+
+How to enable checkpoints?
 Poweroff Guest VM, go to vm settings inside hyper v > Checkpoints option enable Production or Standard Checkpoints. 
 Production checkpoints are filesystem snapshots of your virtual disk. Easiest and Recommended option.
 
