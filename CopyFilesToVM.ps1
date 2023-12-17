@@ -1,6 +1,6 @@
 #Removed references to parsec. Looking for alternatives? Try Moonlight, Sunshine,AMD Link, Steam Remote Play.
 #Script not running? Enable Powershell script execution.
-Increased amount of space, gpu provisioning and cores. Added user friendly comments. 
+#Increased amount of space, gpu provisioning and cores. Added user friendly comments. 
 $params = @{
 #Don't change name after provision. Something may break.
     VMName = "GPUPV"
