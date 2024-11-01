@@ -1,14 +1,47 @@
-Removed references to parsec. Looking for alternatives? Try Moonlight, Sunshine,AMD Link, Steam Remote Play.
-Script not running? Enable Powershell script execution.
-Increased amount of space, gpu provisioning and cores. Added user friendly comments. 
+# GPU-PV Fork - Read Me
 
-How to enable checkpoints?
-Poweroff Guest VM, go to vm settings inside hyper v > Checkpoints option enable Production or Standard Checkpoints. 
-Production checkpoints are filesystem snapshots of your virtual disk. Easiest and Recommended option.
+### Key Changes:
+- **Removed Parsec references**: Looking for alternatives? Try the following:
+  - **Moonlight**
+  - **Sunshine**
+  - **AMD Link**
+  - **Steam Remote Play**
+  
+- **Script not running?**  
+  Ensure **Powershell script execution** is enabled by running the following command in an elevated PowerShell session (Run as Administrator):
 
-Microsoft Definitions:
-Production checkpoints are "point in time" images of a virtual machine, which can be restored later on in a way that is completely supported for all production workloads. This is achieved by using backup technology inside the guest to create the checkpoint, instead of using saved state technology.
+  ```powershell
+  Set-ExecutionPolicy RemoteSigned
+  ```
 
-Standard checkpoints capture the state, data, and hardware configuration of a running virtual machine and are intended for use in development and test scenarios. Standard checkpoints can be useful if you need to recreate a specific state or condition of a running virtual machine so that you can troubleshoot a problem.
+  This command allows scripts downloaded from the internet to run if they are signed by a trusted publisher, while still allowing local scripts to run without a signature.
 
+- **Resource Enhancements**:  
+  Increased provisioning for:
+  - Disk space
+  - GPU resources
+  - CPU cores
 
+- **User-Friendly Comments**:  
+  Added more descriptive comments throughout the script to improve usability.
+
+---
+
+## How to Enable Checkpoints in Hyper-V
+
+1. **Power off the Guest VM**.
+2. Open the VM settings inside Hyper-V Manager.
+3. Navigate to the **Checkpoints** section.
+4. Choose between:
+   - **Production Checkpoints** (Recommended)
+   - **Standard Checkpoints**
+
+### Production Checkpoints (Recommended):
+- These are filesystem snapshots of your virtual disk.
+- Microsoft defines production checkpoints as "point-in-time" images of a virtual machine that can be restored later. 
+- They use backup technology inside the guest operating system, making them fully supported for production workloads.
+
+### Standard Checkpoints:
+- Capture the state, data, and hardware configuration of a running virtual machine.
+- Primarily used for development and testing scenarios.
+- Useful for recreating specific states or conditions of a VM to troubleshoot problems.
